@@ -1,19 +1,121 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
+    <meta charset="UTF-8">
     <title>URL Kısaltıcı</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            color: #2f3640;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #273c75;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #44bd32;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #4cd137;
+        }
+
+        .url-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .url-list li {
+            margin-bottom: 15px;
+            background-color: #f1f2f6;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .short-link {
+            color: #0097e6;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>URL Kısaltıcı Paneli</h1>
-    <form action="/shorten-url" method="post">
-        <input type="text" name="original_url" placeholder="Uzun URL girin" required>
-        <button type="submit">Kısalt</button>
-        {% if short_url %}
-        <p>Kısaltılmış URL: <a href="{{ short_url }}">{{ short_url }}</a></p>
-        {% endif %}
-    </form>
-    <form action="/shorten-url" method="post">
-    </form>
+    <div class="container">
+        <h1>🔗 URL Kısaltıcı</h1>
+
+        <form action="/shorten" method="post">
+            <input type="text" name="original_url" placeholder="Uzun URL girin" required>
+            <button type="submit">Kısalt</button>
+             action="/clear" method="post" style="margin-top: 10px; text-align: center;">
+            <button type="submit" style="background-color: #e84118;">🧹 Tümünü Temizle</button>
+
+        </form>
+
+        <h2>Kısaltılmış URL'ler</h2>
+        <ul class="url-list">
+            {% for url in urls %}
+            <li>
+                <div>
+                    <span>🔗 <a href="{{ url.original_url }}" target="_blank">{{ url.original_url }}</a></span>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                        <a class="short-link" id="link-{{ url.short_code }}" href="/r/{{ url.short_code }}" target="_blank">
+                            http://localhost:8000/r/{{ url.short_code }}
+                    </a>
+                    <button onclick="copyToClipboard('link-{{ url.short_code }}')">📋 Kopyala</button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
+<script>
+    function copyToClipboard(elementId) {
+        const link = document.getElementById(elementId).href;
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Kopyalandı: " + link);
+        });
+    }
+</script>
+
 </html>
